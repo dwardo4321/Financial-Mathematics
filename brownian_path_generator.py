@@ -6,6 +6,7 @@ N = 100000
 norm_rv1 = np.random.normal(0, 2, N-1)
 norm_rv2 = np.random.normal(0, 2, N-1)
 
+#  1 ----------------------------------------------------------
 W_T1 = np.zeros((N, 1)); W_T2 = np.zeros((N, 1))
 
 norm_rv = [norm_rv1, norm_rv2]
@@ -15,6 +16,7 @@ for data, w_t in zip(norm_rv, wp):
     for i, rv in enumerate(data):
         w_t[i + 1, ] += w_t[i, ] + rv
 
+#  2 ----------------------------------------------------------
 # Shorter, no loops
 # W_T1 = np.concatenate(([0], np.cumsum(norm_rv1)))[:, None]
 # W_T2 = np.concatenate(([0], np.cumsum(norm_rv2)))[:, None]
