@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 N = 100000
-norm_rv1 = np.random.normal(0, 2, N-1)
-norm_rv2 = np.random.normal(0, 2, N-1)
+norm_rv1 = np.random.normal(0, 2, N-1); norm_rv2 = np.random.normal(0, 2, N-1)
 
 #  1 ----------------------------------------------------------
 W_T1 = np.zeros((N, 1)); W_T2 = np.zeros((N, 1))
@@ -20,6 +19,8 @@ for data, w_t in zip(norm_rv, wp):
 # W_T1 = np.concatenate(([0], np.cumsum(norm_rv1)))[:, None]
 # W_T2 = np.concatenate(([0], np.cumsum(norm_rv2)))[:, None]
 
+#  3 ----------------------------------------------------------
+# Correlated brownian path, with the correlation coefficient = phi
 phi = 0.95
 W_T3 = phi * W_T1 + np.sqrt(1 - phi**2) * W_T2
 
