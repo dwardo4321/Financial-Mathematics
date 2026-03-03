@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 # import scipy.stats as stats
 import pandas as pd
 
-def path_generator(n: int, t: float, sig: float, num_gens = 2, plot=False):
+def path_generator(n: int, t: float, sig: float, num_gens: int, plot=False):
     dt = t / (n - 1)
     w_t = []
 
@@ -24,5 +24,5 @@ def path_generator(n: int, t: float, sig: float, num_gens = 2, plot=False):
     else:
         return out.head()
 
-print(path_generator(1000, 1, 0.2, 100, plot=True))
+print(path_generator(1000, 5, 0.8, 5, plot=True))
 
