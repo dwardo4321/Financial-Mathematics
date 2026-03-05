@@ -3,23 +3,21 @@ import matplotlib.pyplot as plt
 # import scipy.stats as stats
 import pandas as pd
 
-
-def path_generator(n: int, t: float, scale: float, num_gens: int, plot=False, correlated: tuple[object, np.ndarray] = (False, None)):
+def path_generator(n: int, t: float, num_gens: int, plot=False, correlated: tuple[object, np.ndarray] = (False, None)):
     dt = t / (n - 1)
     w_t = []
 
-    for j in range(num_gens):
-        norm_rv = np.random.normal(0, scale * np.sqrt(dt), (n - 1, num_gens))
-        out = pd.DataFrame(np.vstack((np.zeros((1, num_gens)), np.cumsum(norm_rv, axis=0))),
-                           columns=np.arange(1, num_gens + 1, 1))
-
     if correlated[0]:
         l_matrix = np.linalg.cholesky(correlated[1])
-        correlated_out = l_matrix * correlated[1]
+        #correlated_out = l_matrix @ correlated[1]
         z = np.random.normal(0, 1, size=(n - 1, num_gens))
-        dw = np.sqrt(dt) * (z @ l_matrix.T) * scale
-        out = pd.DataFrame(np.vstack([np.zeros((1, num_gens)), np.cumsum(dw, axis=0)]),
-                           columns=np.arange(1, num_gens + 1, 1))
+        dw = np.sqrt(dt) * (z @ l_matrix.T)
+        data = np.vstack([np.zeros((1, num_gens)), np.cumsum(dw, axis=0)])
+        out = pd.DataFrame(data, columns=np.arange(1, num_gens + 1, 1))
+    else:
+        norm_rv = np.random.normal(0, np.sqrt(dt), (n - 1, num_gens))  # N(0, dt)
+        data = np.vstack((np.zeros((1, num_gens)), np.cumsum(norm_rv, axis=0)))
+        out = pd.DataFrame(data, columns=np.arange(1, num_gens + 1, 1))
 
     if plot:
         plt.figure(figsize=(10, 5), facecolor='darkgrey')
@@ -43,8 +41,8 @@ def path_generator(n: int, t: float, scale: float, num_gens: int, plot=False, co
 
 #print(path_generator(1000, 5, 0.8, corr1.shape[0], plot=True, correlated=(True, corr1)))  # Ex 2
 
-# dim = 50
-# corr2 = np.full((dim, dim), 0.75)
-# np.fill_diagonal(corr2, 1)
+dim = 5
+corr2 = np.full((dim, dim), 0.75)
+np.fill_diagonal(corr2, 1)
 
-# print(path_generator(1000, 5, 0.8, dim, plot=True, correlated=(True, corr2)))  # Ex 3
+print(path_generator(1000, 5, dim, plot=True, correlated=(True, corr2)))  # Ex 3
