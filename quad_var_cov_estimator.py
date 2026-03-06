@@ -44,9 +44,9 @@ def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, corre
     # ------------------------------------------------
     import brownian_path_generator as bpg
     if correlated[0]:
-        path = bpg.path_generator(n, t, scale, num_gens, plot=False, correlated =(True, correlated[1]))
+        path = bpg.path_generator(n = n, t = t, num_gens = num_gens, correlated =(True, correlated[1]))
     else:
-        path = bpg.path_generator(n, t, scale, num_gens, plot=False)
+        path = bpg.path_generator(n = n, t = t, num_gens = num_gens)
     # ------------------------------------------------
     qv_bm = np.zeros((n-1, num_gens))
     for j in range(num_gens):
@@ -82,13 +82,64 @@ def geometric_bm(s_0: float, sd: float, t_n: float, ret: float, n_all: int):
 #plt.plot(test)
 #plt.show()
 
-t = 20; n = 1000000; sig = 0.5; alph = 0.1
-s_t = geometric_bm(1000, sig, t, alph, n)
-log_ret = np.log(s_t.iloc[:-1, 0].to_numpy() / s_t.iloc[1:, 0].to_numpy())
+# t = 20; n = 1000000; sig = 0.5; alph = 0.1
+# s_t = geometric_bm(1000, sd = sig, t_n = t, ret = alph, n_all = n)
+# log_ret = np.log(s_t.iloc[:-1, 0].to_numpy() / s_t.iloc[1:, 0].to_numpy())
 
-sos = (1/t) * sum(log_ret ** 2)
-print(f"{sos:.4f}")                     # Sum of the squared log returns over the period 0-T
-var = sig ** 2
-print(f"{var:.4f}")                       # Variance
+# var_est = (1/t) * sum(log_ret ** 2)
+# print(f"{var_est:.5f}")                     # Sum of the squared log returns over the period 0-T
+# var = sig ** 2
+# print(f"{var:.5f}")                       # Variance
 
 # 4 --------------------- Quadratic covariation / cross-variation ------------------------------------------------------
+from typing import Literal
+from dataclasses import dataclass
+
+choice = Literal["Const", "Seasonal", "GBM"]
+# --- parameter bundles ---
+@dataclass
+class ParamsConst:
+    mu: float
+    sig: float
+
+@dataclass
+class ParamsSeasonal:
+    a0: float; a1: float
+    b0: float; b1: float
+@dataclass
+class ParamsGBM:
+    path: str
+    seed: int = 0
+
+def ito_process_gen(num_assets: int, assets_t0: list, vol_drift: choice, parameters: Union[ParamsConst, ParamsSeasonal, ParamsGBM],
+                    n = 1000, t = 5, num_gens = 2, correlated: tuple[bool, np.ndarray] = (False, None)):
+
+    import brownian_path_generator as bpg
+    if correlated[0]:
+        bm = bpg.path_generator(n, t, num_gens, correlated=(True, correlated[1]))
+    else:
+        bm = bpg.path_generator(n, t, num_gens)
+
+    prices = np.empty((n, num_assets))
+    prices[0, :] = assets_t0
+    time = np.linspace(0, t, n)
+    eps = 1e-5
+    for i in range(num_assets):
+        for j in range(n-1):
+            if vol_drift == "Const":
+                drift = parameters.mu
+                vol = parameters.sig
+            elif vol_drift == "Seasonal":
+                drift_calc = parameters.a_0 + parameters.a_1 * np.sin(2 * np.pi * time[j])
+                vol_calc = parameters.b_0 + parameters.b_1 * np.cos(2 * np.pi * time[j])
+                drift = max(eps, drift_calc)
+                vol = max(eps, vol_calc)
+            else:
+                mu = parameters.mu  # requires ParamsGBM(mu, sig)
+                sig = parameters.sig
+
+                s_t = prices[j, i]  # current price for asset i at step j
+                drift = mu * s_t  # θ(t,s_t)
+                vol = sig * s_t
+
+        assets_t0[i] + drift*time[]

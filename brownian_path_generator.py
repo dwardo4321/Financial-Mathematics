@@ -31,18 +31,27 @@ def path_generator(n: int, t: float, num_gens: int, plot=False, correlated: tupl
         return out
 
 
-#print(path_generator(1000, 5, 0.8, 3, plot=False))  # Ex 1
+#print(path_generator(1000, 5, 3, plot=False))  # Ex 1
 
-#corr1 = np.array([[1.00, 0.70, 0.20, -0.10, 0.35],
-#                  [0.70, 1.00, 0.25, 0.05, 0.40],
-#                  [0.20, 0.25, 1.00, 0.60, 0.15],
-#                  [-0.10, 0.05, 0.60, 1.00, 0.10],
-#                  [0.35, 0.40, 0.15, 0.10, 1.00]])
+corr1 = np.array([[1.00, 0.70, 0.20, -0.10, 0.35],
+                  [0.70, 1.00, 0.25, 0.05, 0.40],
+                  [0.20, 0.25, 1.00, 0.60, 0.15],
+                  [-0.10, 0.05, 0.60, 1.00, 0.10],
+                  [0.35, 0.40, 0.15, 0.10, 1.00]])
 
 #print(path_generator(1000, 5, 0.8, corr1.shape[0], plot=True, correlated=(True, corr1)))  # Ex 2
 
-dim = 5
-corr2 = np.full((dim, dim), 0.75)
-np.fill_diagonal(corr2, 1)
+#dim = 5
+#corr2 = np.full((dim, dim), 0.75)
+#np.fill_diagonal(corr2, 1)
 
-print(path_generator(1000, 5, dim, plot=True, correlated=(True, corr2)))  # Ex 3
+#print(path_generator(1000, 5, dim, plot=True, correlated=(True, corr2)))  # Ex 3
+
+# Tests
+#W = path_generator(1000, 5, 5, correlated=(True, corr1))
+#dW = W.diff().dropna()
+#print(dW.corr())
+
+#T = 5
+#RC = (dW.to_numpy().T @ dW.to_numpy()) / T    # realized cov / T ≈ rho
+#print(RC)
