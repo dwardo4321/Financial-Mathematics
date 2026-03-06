@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 # import scipy.stats as stats
 import pandas as pd
+from numpy.ma.core import cumsum
 
 
 # 1 --------------------- Quadratic variation for a random walk --------------------------------------------------------
@@ -68,11 +69,11 @@ def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, corre
 
 # 3 --------------------- Realized volatility from GBM -----------------------------------------------------------------
 # This one reduces to the QV of a BM
-def geometric_bm(s_0: float, sig: float, t: float, alph: float, n: int):
+def geometric_bm(s_0: float, sd: float, t_n: float, ret: float, n_all: int):
     import brownian_path_generator as bpg
-    bms = bpg.path_generator(n, t, sig, 1)
-    price = s_0 * np.exp(sig*bms.iloc[:, 0].to_numpy() + (alph - 0.5*(sig**2))*np.linspace(0, t, n))
-    out = pd.DataFrame({"Time": np.linspace(0, t, n), "Price": price}).set_index("Time")
+    bms = bpg.path_generator(n_all, t_n, 1)
+    price = s_0 * np.exp(sd*bms.iloc[:, 0].to_numpy() + (ret - 0.5*(sd**2))*np.linspace(0, t_n, n_all))
+    out = pd.DataFrame({"Time": np.linspace(0, t_n, n_all), "Price": price}).set_index("Time")
     return out
 
 #test = geometric_bm(1000, 0.2, 20, 0.1, 100000)
@@ -80,4 +81,14 @@ def geometric_bm(s_0: float, sig: float, t: float, alph: float, n: int):
 #plt.figure(figsize=(18, 5))
 #plt.plot(test)
 #plt.show()
+
+t = 20; n = 1000000; sig = 0.5; alph = 0.1
+s_t = geometric_bm(1000, sig, t, alph, n)
+log_ret = np.log(s_t.iloc[:-1, 0].to_numpy() / s_t.iloc[1:, 0].to_numpy())
+
+sos = (1/t) * sum(log_ret ** 2)
+print(f"{sos:.4f}")                     # Sum of the squared log returns over the period 0-T
+var = sig ** 2
+print(f"{var:.4f}")                       # Variance
+
 # 4 --------------------- Quadratic covariation / cross-variation ------------------------------------------------------
