@@ -31,7 +31,7 @@ def path_generator(n: int, t: float, num_gens: int, plot=False, correlated: tupl
         return out
 
 
-print(path_generator(100000, 5, 20, plot=True))  # Ex 1
+#print(path_generator(100000, 5, 20, plot=True))  # Ex 1
 
 #corr1 = np.array([[1.00, 0.70, 0.20, -0.10, 0.35],
 #                  [0.70, 1.00, 0.25, 0.05, 0.40],
