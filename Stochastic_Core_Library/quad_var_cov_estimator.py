@@ -69,7 +69,7 @@ def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, corre
 # 3 --------------------- Realized volatility from GBM -----------------------------------------------------------------
 # This one reduces to the QV of a BM
 def geometric_bm(s_0: float, sd: float, t_n: float, ret: float, n_all: int):
-    import brownian_path_generator as bpg
+    from . import brownian_path_generator as bpg
     bms = bpg.path_generator(n_all, t_n, 1)
     price = s_0 * np.exp(sd*bms.iloc[:, 0].to_numpy() + (ret - 0.5*(sd**2))*np.linspace(0, t_n, n_all))
     out = pd.DataFrame({"Time": np.linspace(0, t_n, n_all), "Price": price}).set_index("Time")
@@ -151,17 +151,17 @@ def ito_process_gen(num_assets: int, assets_t0: list, vol_drift: choice, paramet
     prices = pd.DataFrame(prices, columns = np.arange(1, num_assets+1, 1))
     return prices
 
-asset_t0 = [1523, 2687, 742, 1492, 2531, 2741, 2480, 1603, 984]
-assets_no = 9
+#asset_t0 = [1523, 2687, 742, 1492, 2531, 2741, 2480, 1603, 984]
+#assets_no = 9
 
-para_gbm = ParamsGBM(mu = 0.1, sig = 0.15)
-S_t_1 = ito_process_gen(num_assets = assets_no, assets_t0 = asset_t0, vol_drift = "GBM", parameters = para_gbm, n = 100, t = 1, num_gens = assets_no)
-print(S_t_1.head())
+#para_gbm = ParamsGBM(mu = 0.1, sig = 0.15)
+#S_t_1 = ito_process_gen(num_assets = assets_no, assets_t0 = asset_t0, vol_drift = "GBM", parameters = para_gbm, n = 100, t = 1, num_gens = assets_no)
+#print(S_t_1.head())
 
-para_sns = ParamsSeasonal(a_0 = 0.05, a_1 = 0.1, b_0 = 0.06, b_1 = 0.11)
-S_t_2 = ito_process_gen(num_assets = assets_no, assets_t0 = asset_t0, vol_drift = "Seasonal", parameters = para_sns, n = 100, t = 1, num_gens = assets_no)
-print(S_t_2.head())
+#para_sns = ParamsSeasonal(a_0 = 0.05, a_1 = 0.1, b_0 = 0.06, b_1 = 0.11)
+#S_t_2 = ito_process_gen(num_assets = assets_no, assets_t0 = asset_t0, vol_drift = "Seasonal", parameters = para_sns, n = 100, t = 1, num_gens = assets_no)
+#print(S_t_2.head())
 
-para_const = ParamsConst(mu = 0.05, sig = 0.09)
-S_t_3 = ito_process_gen(num_assets = assets_no, assets_t0 = asset_t0, vol_drift = "Const", parameters = para_const, n = 100, t = 1, num_gens = assets_no)
-print(S_t_3.head())
+#para_const = ParamsConst(mu = 0.05, sig = 0.09)
+#S_t_3 = ito_process_gen(num_assets = assets_no, assets_t0 = asset_t0, vol_drift = "Const", parameters = para_const, n = 100, t = 1, num_gens = assets_no)
+#print(S_t_3.head())
