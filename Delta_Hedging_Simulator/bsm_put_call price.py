@@ -27,7 +27,7 @@ def bsm_put_call_pricer(s_0: float, strike: float, sig: float, rate: float, T: i
     pd.set_option('display.float_format', '{:.4f}'.format)
     out = pd.DataFrame({"Time": t_0n, "Call Price": c_tx, "Put Price": p_tx, "Asset Prices": s_t}).set_index("Time")
     if plot:
-        fig = plt.figure(figsize=(14, 8.5), facecolor='darkgrey')
+        fig = plt.figure(figsize=(11, 8.5), facecolor='darkgrey')
         cols = ["Call Price", "Put Price", "Asset Prices"]
         for i, data in enumerate(cols):
             sub = fig.add_subplot(3, 1, i+1)
