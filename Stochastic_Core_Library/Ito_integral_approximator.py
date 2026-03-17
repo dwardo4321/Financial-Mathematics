@@ -12,5 +12,5 @@ def ito_integral_approx(t: float, sig: float, partitions: int, func):
         x += dw_t[i] * func(time_dat[i])
     return x
 
-print(ito_integral_approx(5, 0.3, 100, lambda j: np.exp(j)))
+#print(ito_integral_approx(5, 0.3, 100, lambda j: np.exp(j)))
 
