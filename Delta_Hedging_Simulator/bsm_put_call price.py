@@ -73,9 +73,33 @@ def bsm_put_call_pricer(s_0: float, strike: float, sig: float, rate: float, T: i
     else:
         return out
 
-delta_engine = bsm_put_call_pricer(s_0 = 1000, strike = 985, sig = 0.2, rate = 0.05, T = 20, alpha = 0.05, n = 10000, risk_neutral_pricing = False, plot = True)
-pd.set_option("display.max_columns", None)
-pd.set_option("display.width", 1000)
-pd.set_option("display.expand_frame_repr", False)
-print(delta_engine)
+#delta_engine = bsm_put_call_pricer(s_0 = 1000, strike = 985, sig = 0.2, rate = 0.05, T = 10, alpha = 0.05, n = 1000, risk_neutral_pricing = False, plot = True)
+#pd.set_option("display.max_columns", None)
+#pd.set_option("display.width", 1000)
+#pd.set_option("display.expand_frame_repr", False)
+#print(delta_engine)
+
+def hedging_error_dist(parameters, no_of_sims: int):
+
+    s_0 = parameters[0]; strike = parameters[1]; sig = parameters[2]; rate = parameters[3]; T = parameters[4]; alpha = parameters[5]
+    n = parameters[6]; risk_neutral_pricing = parameters[7]; plot = parameters[8]
+
+    hedge_error_call = np.empty(no_of_sims)
+    hedge_error_put = np.empty(no_of_sims)
+
+    for i in range(no_of_sims):
+        data = bsm_put_call_pricer(s_0, strike, sig, rate, T, alpha, n, risk_neutral_pricing, plot)
+        hedge_error_call[i] = data["Portfolio Call"].iloc[-1] - data["Call Price"].iloc[-1]
+        hedge_error_put[i] = data["Portfolio Put"].iloc[-1] - data["Put Price"].iloc[-1]
+
+    df = pd.DataFrame({"Sim": np.arange(no_of_sims),"Hedging Call Error": hedge_error_call, "Hedging Put Error": hedge_error_put}).set_index("Sim")
+    return df
+
+pars = [1000, 985, 0.2, 0.05, 10, 0.05, 1000, False, False]
+he = hedging_error_dist(pars, no_of_sims = 1000)
+
+plt.figure(figsize = (10, 10))
+plt.hist(he["Hedging Call Error"])
+plt.show()
+
 
