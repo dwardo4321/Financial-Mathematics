@@ -1,3 +1,4 @@
+from Stochastic_Core_Library.brownian_path_generator import path_generator
 import numpy as np
 import matplotlib.pyplot as plt
 # import scipy.stats as stats
@@ -41,11 +42,10 @@ def qv_random_walk(n: int, loc: float, scale: float, plot=False):
 # 2 --------------------- Quadratic variation of Brownian motion -------------------------------------------------------
 def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, correlated: tuple[bool, np.ndarray] = (False, None)):
     # ------------------------------------------------
-    import brownian_path_generator as bpg
     if correlated[0]:
-        path = bpg.path_generator(n = n, t = t, num_gens = num_gens, correlated =(True, correlated[1]))
+        path = path_generator(n = n, t = t, num_gens = num_gens, correlated =(True, correlated[1]))
     else:
-        path = bpg.path_generator(n = n, t = t, num_gens = num_gens)
+        path = path_generator(n = n, t = t, num_gens = num_gens)
     # ------------------------------------------------
     qv_bm = np.zeros((n-1, num_gens))
     for j in range(num_gens):
@@ -69,8 +69,7 @@ def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, corre
 # 3 --------------------- Realized volatility from GBM -----------------------------------------------------------------
 # This one reduces to the QV of a BM
 def geometric_bm(s_0: float, sd: float, t_n: float, ret: float, n_all: int):
-    from . import brownian_path_generator as bpg
-    bms = bpg.path_generator(n_all, t_n, 1)
+    bms = path_generator(n_all, t_n, 1)
     price = s_0 * np.exp(sd*bms.iloc[:, 0].to_numpy() + (ret - 0.5*(sd**2))*np.linspace(0, t_n, n_all))
     out = pd.DataFrame({"Time": np.linspace(0, t_n, n_all), "Price": price}).set_index("Time")
     return out
@@ -114,11 +113,10 @@ class ParamsGBM:
 def ito_process_gen(num_assets: int, assets_t0: list, vol_drift: choice, parameters: Union[ParamsConst, ParamsSeasonal, ParamsGBM],
                     n = 1000, t = 5, num_gens = 2, correlated: tuple[bool, np.ndarray] = (False, None)):
 
-    import brownian_path_generator as bpg
     if correlated[0]:
-        bm = bpg.path_generator(n, t, num_gens, correlated=(True, correlated[1]))
+        bm = path_generator(n, t, num_gens, correlated=(True, correlated[1]))
     else:
-        bm = bpg.path_generator(n, t, num_gens)
+        bm = path_generator(n, t, num_gens)
 
     prices = np.empty((n, num_assets))
     prices[0, :] = assets_t0
