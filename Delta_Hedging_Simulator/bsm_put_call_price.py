@@ -1,5 +1,5 @@
 from Stochastic_Core_Library.quad_var_cov_estimator import geometric_bm
-from Utility_Functions.utility import array_def, time_steps_gamma_delta_pricer, time_steps_0_portfolio, time_steps_i_portfolio, delta_engine_plotter, data_display
+from Utility_Functions.utility_functions import array_def, time_steps_gamma_delta_pricer, time_steps_0_portfolio, time_steps_i_portfolio, delta_engine_plotter, data_display
 import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
@@ -40,8 +40,8 @@ def bsm_put_call_pricer(s_0: float, strike: float, sig: float, rate: float, T: i
         data_display(1000)
         return out
 
-delta_engine = bsm_put_call_pricer(s_0 = 980, strike = 985, sig = 0.1, rate = 0.09, T = 3, alpha = 0.05, n = 10000, risk_neutral_pricing = False, plot = True)
-print(delta_engine)
+#delta_engine = bsm_put_call_pricer(s_0 = 980, strike = 985, sig = 0.1, rate = 0.09, T = 3, alpha = 0.05, n = 10000, risk_neutral_pricing = False, plot = True)
+#print(delta_engine)
 
 def hedging_error_dist(no_of_sims: int, parameters_call=None, parameters_put=None, parameters=None, plot: bool = False, c_p_same_paras: bool = False):
 
@@ -94,10 +94,10 @@ def hedging_error_dist(no_of_sims: int, parameters_call=None, parameters_put=Non
 
     return df, results
 
-pars_c = [1000, 985, 0.2, 0.05, 10, 0.05, 1000, False]
-pars_p = [945, 800, 0.15, 0.1, 15, 0.088, 1000, False]
-errors, summary = hedging_error_dist(parameters_call=pars_c, parameters_put=pars_p, no_of_sims = 100, plot=True)
-print(errors, "\n")
-print(summary)
+#pars_c = [1000, 985, 0.2, 0.05, 10, 0.05, 1000, False]
+#pars_p = [945, 800, 0.15, 0.1, 15, 0.088, 1000, False]
+#errors, summary = hedging_error_dist(parameters_call=pars_c, parameters_put=pars_p, no_of_sims = 100, plot=True)
+#print(errors, "\n")
+#print(summary)
 
 
