@@ -76,3 +76,4 @@ def data_display(disp_width):
     pd.set_option("display.width", disp_width)
     pd.set_option("display.expand_frame_repr", False)
     return None
+

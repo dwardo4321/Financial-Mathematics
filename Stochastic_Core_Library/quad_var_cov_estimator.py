@@ -74,8 +74,9 @@ def geometric_bm(s_0: float, sd: float, t_n: float, ret: float, n_all: int):
     out = pd.DataFrame({"Time": np.linspace(0, t_n, n_all), "Price": price}).set_index("Time")
     return out
 
-#test = geometric_bm(1000, 0.2, 20, 0.1, 100000)
-#print(test)
+#test = geometric_bm(1000, 0.2, 20, 0.1, 1000)
+#test_1 = test.iloc[:,0].to_numpy()
+#print(test_1[:, None][10, 0])
 #plt.figure(figsize=(18, 5))
 #plt.plot(test)
 #plt.show()

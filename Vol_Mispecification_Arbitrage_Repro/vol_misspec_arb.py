@@ -1,5 +1,5 @@
 from Stochastic_Core_Library.quad_var_cov_estimator import geometric_bm
-from Utility_Functions.utility_functions import array_def, time_steps_gamma_delta_pricer, time_steps_0_portfolio, time_steps_i_portfolio, delta_engine_plotter, data_display
+from Utility_Functions.utilities_delta_gamma_engine import array_def, time_steps_gamma_delta_pricer, time_steps_0_portfolio, time_steps_i_portfolio, delta_engine_plotter, data_display
 import numpy as np
 import scipy.stats as stats
 import matplotlib.pyplot as plt
