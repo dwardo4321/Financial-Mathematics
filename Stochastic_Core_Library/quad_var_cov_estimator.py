@@ -68,13 +68,18 @@ def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, corre
 
 # 3 --------------------- Realized volatility from GBM -----------------------------------------------------------------
 # This one reduces to the QV of a BM
-def geometric_bm(s_0: float, sd: float, t_n: float, ret: float, n_all: int):
-    bms = path_generator(n_all, t_n, 1)
-    price = s_0 * np.exp(sd*bms.iloc[:, 0].to_numpy() + (ret - 0.5*(sd**2))*np.linspace(0, t_n, n_all))
-    out = pd.DataFrame({"Time": np.linspace(0, t_n, n_all), "Price": price}).set_index("Time")
-    return out
+def geometric_bm(s_0: float, sd: float, t_n: float, rate: float, n_all: int, n_sims: int):
+    bms = path_generator(n_all, t_n, n_sims)
+    paths = pd.DataFrame()
+    #col = range(1, n_sims + 1, 1)
+    for i in range(n_sims):
+        path_i = s_0 * np.exp(sd*bms.iloc[:, i].to_numpy() + (rate - 0.5*(sd**2))*np.linspace(0, t_n, n_all))
+        paths = pd.concat([paths, pd.DataFrame({i+1 :path_i})], axis = 1)
 
-#test = geometric_bm(1000, 0.2, 20, 0.1, 1000)
+    return paths
+
+#test = geometric_bm(1000, 0.2, 20, 0.1, 1000, 5)
+#print(np.log(test))
 #test_1 = test.iloc[:,0].to_numpy()
 #print(test_1[:, None][10, 0])
 #plt.figure(figsize=(18, 5))
