@@ -8,7 +8,7 @@ import pandas as pd
 def bsm_put_call_pricer(s_0: float, strike: float, sig: float, rate: float, T: int, alpha: float, n: int, risk_neutral_pricing: bool = False, plot: bool = False):
 
     drift = rate if risk_neutral_pricing else alpha
-    s_t = geometric_bm(s_0, sig, T, drift, n)["Price"].to_numpy()
+    s_t = geometric_bm(s_0, sig, T, drift, n, 1).iloc[:,0].to_numpy()
 
     dt = T/(n-1)
     t_0n = np.linspace(0, T, n)
@@ -40,8 +40,8 @@ def bsm_put_call_pricer(s_0: float, strike: float, sig: float, rate: float, T: i
         data_display(1000)
         return out
 
-delta_engine = bsm_put_call_pricer(s_0 = 980, strike = 985, sig = 0.1, rate = 0.09, T = 3, alpha = 0.05, n = 10000, risk_neutral_pricing = False, plot = True)
-print(delta_engine)
+#delta_engine = bsm_put_call_pricer(s_0 = 980, strike = 985, sig = 0.1, rate = 0.09, T = 3, alpha = 0.05, n = 10000, risk_neutral_pricing = False, plot = True)
+#print(delta_engine)
 
 def hedging_error_dist(no_of_sims: int, parameters_call=None, parameters_put=None, parameters=None, plot: bool = False, c_p_same_paras: bool = False):
 

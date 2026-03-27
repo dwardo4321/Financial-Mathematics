@@ -59,17 +59,17 @@ def time_steps_i_portfolio(i, bank_call, bank_put, rate, dt, s_t, delta_call, de
 
     return bank_call, bank_put, portfolio_call, portfolio_put
 
-def delta_engine_plotter(plot: bool, dim, cols, t_0n, out, nrow, ncol):
+def delta_engine_plotter(plot: bool, dim, cols, t_0n, out, nrow, ncol, x_label: str = "Time"):
     fig = plt.figure(figsize=dim, facecolor='darkgrey')
 
     for i, data in enumerate(cols):
         sub = fig.add_subplot(nrow, ncol, i + 1)
         sub.plot(t_0n, out[data].values)
-        sub.set_xlabel("Time", fontsize=12)
+        sub.set_xlabel(x_label, fontsize=12)
         sub.set_ylabel(data, fontsize=12)
         sub.grid()
     fig.tight_layout()
-    return plt.show()
+    return plt.show(block=False)
 
 def data_display(disp_width):
     pd.set_option("display.max_columns", None)
