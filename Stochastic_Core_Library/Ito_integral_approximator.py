@@ -1,3 +1,8 @@
+# %%
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
+
 import numpy as np
 import matplotlib.pyplot as plt
 # import scipy.stats as stats

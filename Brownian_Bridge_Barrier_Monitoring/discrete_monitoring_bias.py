@@ -1,3 +1,9 @@
+# %%
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
+
+#%%
 from Stochastic_Core_Library.quad_var_cov_estimator import geometric_bm
 from Utility_Functions.utilities_delta_gamma_engine import delta_engine_plotter
 import numpy as np
@@ -5,6 +11,7 @@ import pandas as pd
 import scipy.stats as stats
 import matplotlib.pyplot as plt
 
+#%%
 def discretisation_bridge_monitoring(s_0: float, strike: float, sd: float, T: float, rate: float, n_lengths: list, n_sims: int, barrier_raw: float, plot: bool = False, debug: bool = False):
 
     n_lengths.append(n_lengths[-1] + 10000)  # for benchmark price
@@ -93,6 +100,8 @@ def discretisation_bridge_monitoring(s_0: float, strike: float, sd: float, T: fl
 
 n_lens = np.arange(100, 10000, 100).tolist()
 out = discretisation_bridge_monitoring(1000, 955, 0.2**0.5, 1, 0.1, n_lens, 10000, 1200, plot = True)
-
+#%%
 #output = discretisation_bridge_monitoring(1000, 955, 0.2**0.5, 1, 0.1, n_lens, 1000, 1200, 2.5, plot = True, debug = True)
 
+
+# %%

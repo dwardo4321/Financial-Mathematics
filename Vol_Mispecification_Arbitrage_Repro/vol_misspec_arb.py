@@ -1,3 +1,9 @@
+# %%
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
+
+#%%
 from Stochastic_Core_Library.quad_var_cov_estimator import geometric_bm
 from Utility_Functions.utilities_delta_gamma_engine import array_def, time_steps_gamma_delta_pricer, time_steps_0_portfolio, time_steps_i_portfolio, delta_engine_plotter, data_display
 import numpy as np
@@ -5,6 +11,7 @@ import scipy.stats as stats
 import matplotlib.pyplot as plt
 import pandas as pd
 
+#%%
 def volatility_misspecification_pricer(parameters, sig_real: float, plot: bool=False):
     s_0 = parameters[0]; strike = parameters[1]; sig = parameters[2]
     rate = parameters[3]; T = parameters[4]; alpha = parameters[5]
@@ -57,7 +64,7 @@ def volatility_misspecification_pricer(parameters, sig_real: float, plot: bool=F
         data_display(1000)
         return out
 
-
+#%%
 #pars_c = [1000, 1005, 0.2, 0.05, 2, 0.05, 100000, True]
 #vol_mis = volatility_misspecification_pricer(pars_c, 0.25, True)
 #print(vol_mis)

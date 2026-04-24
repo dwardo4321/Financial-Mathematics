@@ -1,10 +1,16 @@
+# %%
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
+
+# %%
 from Stochastic_Core_Library.brownian_path_generator import path_generator
 import numpy as np
 import matplotlib.pyplot as plt
 # import scipy.stats as stats
 import pandas as pd
 
-
+# %%
 # 1 --------------------- Quadratic variation for a random walk --------------------------------------------------------
 def qv_random_walk(n: int, loc: float, scale: float, plot=False):
     x_i = np.random.normal(loc, scale, size=n)
@@ -39,6 +45,7 @@ def qv_random_walk(n: int, loc: float, scale: float, plot=False):
 
 # print(qv_random_walk(1000, 0, 0.1, plot=True))
 
+# %%
 # 2 --------------------- Quadratic variation of Brownian motion -------------------------------------------------------
 def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, correlated: tuple[bool, np.ndarray] = (False, None)):
     # ------------------------------------------------
@@ -64,8 +71,10 @@ def qv_brownian_motion(scale: float, t, n: int, num_gens: int, plot=False, corre
     else:
         return qv_bm
 
-# print(qv_brownian_motion(0.1, 2, 1000, 1, plot=True))
+# %%
+print(qv_brownian_motion(0.1, 2, 1000, 1, plot=True))
 
+# %%
 # 3 --------------------- Realized volatility from GBM -----------------------------------------------------------------
 # This one reduces to the QV of a BM
 def geometric_bm(s_0: float, sd: float, t_n: float, rate: float, n_all: int, n_sims: int):
@@ -95,6 +104,7 @@ def geometric_bm(s_0: float, sd: float, t_n: float, rate: float, n_all: int, n_s
 # var = sig ** 2
 # print(f"{var:.5f}")                       # Variance
 
+# %%
 # 4 --------------------- Quadratic covariation / cross-variation ------------------------------------------------------
 from typing import Literal, Union
 from dataclasses import dataclass
@@ -155,6 +165,7 @@ def ito_process_gen(num_assets: int, assets_t0: list, vol_drift: choice, paramet
     prices = pd.DataFrame(prices, columns = np.arange(1, num_assets+1, 1))
     return prices
 
+# %%
 #asset_t0 = [1523, 2687, 742, 1492, 2531, 2741, 2480, 1603, 984]
 #assets_no = 9
 

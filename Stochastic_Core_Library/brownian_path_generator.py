@@ -1,8 +1,11 @@
+# %%
+
 import numpy as np
 import matplotlib.pyplot as plt
 # import scipy.stats as stats
 import pandas as pd
 
+# %%
 def path_generator(n: int, t: float, num_gens: int, plot=False, correlated: tuple[object, np.ndarray] = (False, None)):
     dt = t / (n - 1)
     w_t = []
@@ -30,9 +33,10 @@ def path_generator(n: int, t: float, num_gens: int, plot=False, correlated: tupl
     else:
         return out
 
-
+# %%
 #print(path_generator(100000, 5, 20, plot=True))  # Ex 1
 
+# %%
 #corr1 = np.array([[1.00, 0.70, 0.20, -0.10, 0.35],
 #                  [0.70, 1.00, 0.25, 0.05, 0.40],
 #                  [0.20, 0.25, 1.00, 0.60, 0.15],
@@ -55,3 +59,5 @@ def path_generator(n: int, t: float, num_gens: int, plot=False, correlated: tupl
 #T = 5
 #RC = (dW.to_numpy().T @ dW.to_numpy()) / T    # realized cov / T ≈ rho
 #print(RC)
+
+# %%
