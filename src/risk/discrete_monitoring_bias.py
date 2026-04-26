@@ -4,8 +4,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
 
 #%%
-from Stochastic_Core_Library.quad_var_cov_estimator import geometric_bm
-from Utility_Functions.utilities_delta_gamma_engine import delta_engine_plotter
+from simulation.paths import geometric_bm
+from hedging.utilities import delta_engine_plotter
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
@@ -14,6 +14,7 @@ import matplotlib.pyplot as plt
 #%%
 def discretisation_bridge_monitoring(s_0: float, strike: float, sd: float, T: float, rate: float, n_lengths: list, n_sims: int, barrier_raw: float, plot: bool = False, debug: bool = False):
 
+    n_lengths = list(n_lengths)
     n_lengths.append(n_lengths[-1] + 10000)  # for benchmark price
 
     monte_carlo_prices = pd.DataFrame(columns = ["dt", "Bridge Correction Price", "Naive Monitoring Price"], index = n_lengths)
@@ -88,14 +89,7 @@ def discretisation_bridge_monitoring(s_0: float, strike: float, sd: float, T: fl
     monte_carlo_prices["Naive Error"] = monte_carlo_prices["Naive Monitoring Price"] - monte_carlo_prices["Bridge Correction Price"].iloc[-1,]
     monte_carlo_prices["Bridge Error"] = monte_carlo_prices["Bridge Correction Price"] - monte_carlo_prices["Bridge Correction Price"].iloc[-1,]
 
-    if plot:
-        cols1 = ["Bridge Correction Price", "Naive Monitoring Price"]
-        cols2 = ["Bridge Error", "Naive Error"]
-        fig1 = delta_engine_plotter(plot, (12, 4), cols1, n_lengths[:-1], monte_carlo_prices.iloc[:-1,], 1, 2, x_label="n lengths")
-        fig2 = delta_engine_plotter(plot, (12, 4), cols2, monte_carlo_prices["dt"].tolist()[:-1], monte_carlo_prices.iloc[:-1,], 1, 2, x_label="dt")
-        return monte_carlo_prices, fig1, fig2
-    else:
-        return monte_carlo_prices
+    return monte_carlo_prices
 
 
 n_lens = np.arange(100, 10000, 100).tolist()
