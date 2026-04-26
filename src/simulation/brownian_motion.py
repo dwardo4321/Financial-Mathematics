@@ -1,11 +1,16 @@
+# %%
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+# %%
 class brownian_motion:
 
     def __init__(self, n: int, t: float, num_gens: int, correlation_matrix: np.array = None):
-        self.n = n, self.t = t, self.num_gens = num_gens, self.correlation_matrix = correlation_matrix
+        self.n = n
+        self.t = t
+        self.num_gens = num_gens
+        self.correlation_matrix = correlation_matrix
     
     # ---------------------------------------------------------------------------------------------------
 
@@ -75,10 +80,8 @@ class brownian_motion:
     
     # ---------------------------------------------------------------------------------------------------
 
+# %%
 bm = brownian_motion(1000, 2, 5)
 
-bm.simulate().plot()
-bm.quadratic_variation().plot()
-
-bm.plot_bm()
-bm.plot_qv()
+bm.quadratic_variation().plot
+# %%
