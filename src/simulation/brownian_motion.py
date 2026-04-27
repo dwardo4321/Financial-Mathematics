@@ -24,11 +24,13 @@ class brownian_motion:
             z = np.random.normal(0, 1, size=(self.n - 1, self.num_gens))
             dw = np.sqrt(dt) * (z @ l_matrix.T)
             data = np.vstack([np.zeros((1, self.num_gens)), np.cumsum(dw, axis=0)])
-            self.bm = pd.DataFrame(data, columns=np.arange(1, self.num_gens + 1, 1))
+            bm = pd.DataFrame(data, columns=np.arange(1, self.num_gens + 1, 1))
         else:
             norm_rv = np.random.normal(0, np.sqrt(dt), (self.n - 1, self.num_gens))  # N(0, dt)
             data = np.vstack((np.zeros((1, self.num_gens)), np.cumsum(norm_rv, axis=0)))
-            self.bm = pd.DataFrame(data, columns=np.arange(1, self.num_gens + 1, 1))
+            bm = pd.DataFrame(data, columns=np.arange(1, self.num_gens + 1, 1))
+
+        self.bm = bm
             
         return self.bm
     
@@ -54,7 +56,9 @@ class brownian_motion:
 
         path = self.simulate()
         
-        self.qv_bm = np.zeros((self.n-1, self.num_gens))
+        qv_bm = np.zeros((self.n-1, self.num_gens))
+        self.qv_bm = qv_bm
+
         for j in range(self.num_gens):
             self.qv_bm[:, j] = np.cumsum((np.diff(path.iloc[:, j]))**2, axis = 0)
         self.qv_bm = pd.DataFrame(self.qv_bm, columns=np.arange(1, self.num_gens + 1, 1))
@@ -71,7 +75,7 @@ class brownian_motion:
         dt = self.t/(self.n-1); x = np.arange(0, self.t, dt)
         plt.figure(figsize=(10, 5), facecolor='darkgrey')
         plt.gca().set_facecolor("white")
-        plt.plot(x, self.qv_bm.values)
+        plt.plot(x, self.qv_bm)
         plt.xlabel('t', fontsize=15)
         plt.ylabel('Quadratic Variation', fontsize=15)
         plt.grid()
@@ -81,7 +85,8 @@ class brownian_motion:
     # ---------------------------------------------------------------------------------------------------
 
 # %%
-bm = brownian_motion(1000, 2, 5)
+bm = brownian_motion(1000, 2, 20)
 
-bm.quadratic_variation().plot
+bm.plot_bm()
+
 # %%

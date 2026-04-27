@@ -25,22 +25,4 @@ def qv_random_walk(n: int, loc: float, scale: float):
 
 
 # print(qv_random_walk(1000, 0, 0.1, plot=True))
-
-# %%
-# 2 --------------------- Quadratic variation of Brownian motion -------------------------------------------------------
-def qv_brownian_motion(scale: float, t, n: int, num_gens: int, correlated: tuple[bool, np.ndarray] = (False, None)):
-    # ------------------------------------------------
-    if correlated[0]:
-        path = path_generator(n = n, t = t, num_gens = num_gens, correlated =(True, correlated[1]))
-    else:
-        path = path_generator(n = n, t = t, num_gens = num_gens)
-    # ------------------------------------------------
-    qv_bm = np.zeros((n-1, num_gens))
-    for j in range(num_gens):
-        qv_bm[:, j] = np.cumsum((np.diff(path.iloc[:, j]))**2, axis = 0)
-    qv_bm = pd.DataFrame(qv_bm, columns=np.arange(1, num_gens+1, 1))
-
-    return qv_bm
-
-# %%
 #print(qv_brownian_motion(0.1, 2, 1000, 1, plot=True))
