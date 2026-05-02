@@ -4,7 +4,7 @@ from pathlib import Path
 sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
 
 #%%
-from simulation.paths import geometric_bm
+from simulation.pricing_paths import geometric_bm
 from hedging.utilities import delta_engine_plotter
 import numpy as np
 import pandas as pd

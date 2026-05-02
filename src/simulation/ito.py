@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
-from simulation.paths import path_generator
+from simulation.pricing_paths import path_generator
 import numpy as np
 import matplotlib.pyplot as plt
 # import scipy.stats as stats
