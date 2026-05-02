@@ -3,99 +3,122 @@ import sys
 from pathlib import Path
 sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics")))
 
-#%%
-from simulation.pricing_paths import geometric_bm
-from hedging.utilities import delta_engine_plotter
+from simulation.pricing_paths import pricePATH
+from plotting.repo_plots import engine_plotter
+
 import numpy as np
 import pandas as pd
 import scipy.stats as stats
-import matplotlib.pyplot as plt
 
 #%%
-def discretisation_bridge_monitoring(s_0: float, strike: float, sd: float, T: float, rate: float, n_lengths: list, n_sims: int, barrier_raw: float, plot: bool = False, debug: bool = False):
+class brownian_bridge_monitoring:
 
-    n_lengths = list(n_lengths)
-    n_lengths.append(n_lengths[-1] + 10000)  # for benchmark price
+    def __init__(self, s_0: float, strike: float, sd: float, T: float, rate: float, n_lengths: list, n_sims: int, barrier_raw: float, debug: bool = False):
+        
+        self.s_0 = s_0
+        self.strike = strike
+        self.sd = sd
+        self.T = T
+        self.rate = rate
+        self.n_lengths = n_lengths
+        self.n_sims = n_sims
+        self.barrier_raw = barrier_raw
+        self.debug = debug
 
-    monte_carlo_prices = pd.DataFrame(columns = ["dt", "Bridge Correction Price", "Naive Monitoring Price"], index = n_lengths)
+    def discretisation_bridge_monitoring(self):
 
-    for k, n in enumerate(monte_carlo_prices.index):
-        prob = np.zeros((n-1, n_sims))
-        dt = T / (n-1)
-        monte_carlo_prices.iloc[k, 0] = dt
+        self.n_lengths = list(self.n_lengths)
+        self.n_lengths.append(self.n_lengths[-1] + 10000)  # for benchmark price
 
-        barrier = np.log(barrier_raw)
-        gbm_prices = geometric_bm(s_0, sd, T, rate, n, n_sims)
+        monte_carlo_prices = pd.DataFrame(columns = ["dt", "Bridge Correction Price", "Naive Monitoring Price"], index = self.n_lengths)
 
-    # Bridge Correction Monitoring -------------------------------------------------------------------------------------
-        # Simulated Log Prices
-        simulation = np.log(gbm_prices.to_numpy())
+        gbm = pricePATH()
+        for k, n in enumerate(monte_carlo_prices.index):
+            prob = np.zeros((n-1, self.n_sims))
+            dt = self.T / (n-1)
+            monte_carlo_prices.iloc[k, 0] = dt
 
-        # Hit Probabilities
-        for i in range(n_sims):
-            for j in range(n-1):
-                if simulation[j,i] < barrier and simulation[j+1,i] < barrier:
-                    prob[j, i] = np.exp(-(2*(barrier - simulation[j,i]) * (barrier - simulation[j+1,i])) / (sd**2 * dt))
-                else:
-                    prob[j, i] = 1
+            barrier = np.log(self.barrier_raw)
+            gbm_prices = gbm.geometric_bm(self.s_0, self.sd, self.T, self.rate, n, self.n_sims)
 
-        prob = pd.DataFrame(prob, columns=np.arange(1, n_sims + 1, 1))
+        # Bridge Correction Monitoring -------------------------------------------------------------------------------------
+            # Simulated Log Prices
+            simulation = np.log(gbm_prices.to_numpy())
 
-        # Bernoulli Path Generator
-        rand_uniform = stats.uniform.rvs(0, 1, np.shape(prob))
-        path_simulations = (prob > rand_uniform).any(axis=0).astype(int)
+            # Hit Probabilities
+            for i in range(self.n_sims):
+                for j in range(n-1):
+                    if simulation[j,i] < barrier and simulation[j+1,i] < barrier:
+                        prob[j, i] = np.exp(-(2*(barrier - simulation[j,i]) * (barrier - simulation[j+1,i])) / (self.sd**2 * dt))
+                    else:
+                        prob[j, i] = 1
 
-        # Path Survival Probabilities
-        path_survival_prob = (1 - prob).prod(axis=0)
+            prob = pd.DataFrame(prob, columns=np.arange(1, self.n_sims + 1, 1))
 
-        # Survival Weighted Payoff
-        maturity_survival_weighted_payoff = path_survival_prob * np.maximum(gbm_prices.iloc[-1, :] - strike, 0)
+            # Bernoulli Path Generator
+            rand_uniform = stats.uniform.rvs(0, 1, np.shape(prob))
+            path_simulations = (prob > rand_uniform).any(axis=0).astype(int)
 
-        # Monte Carlo Payoff
-        monte_carlo_bridge_corrected_payoff = np.exp(-rate * T) * (1 / n_sims) * maturity_survival_weighted_payoff.sum()
+            # Path Survival Probabilities
+            path_survival_prob = (1 - prob).prod(axis=0)
 
-        # Output
-        if debug:
+            # Survival Weighted Payoff
+            maturity_survival_weighted_payoff = path_survival_prob * np.maximum(gbm_prices.iloc[-1, :] - self.strike, 0)
+
+            # Monte Carlo Payoff
+            monte_carlo_bridge_corrected_payoff = np.exp(-self.rate * self.T) * (1 / self.n_sims) * maturity_survival_weighted_payoff.sum()
+
+            # Output
+            if self.debug:
+                pd.set_option('display.float_format', '{:.4f}'.format)
+                print()
+                print(f"-----#####-----#####-----#####-----#####----- Bridge Correction Monitoring, n = {n} -----#####-----#####-----#####-----#####-----\n")
+                print({"Log Price Simulations\n": simulation, "Hit Probabilities\n": prob, "Bernoulli Path Simulations\n": path_simulations,
+                    "Path Survival Probabilities\n": path_survival_prob, "Survival Weighted Payoff\n": maturity_survival_weighted_payoff,
+                    "Monte Carlo Bridge Corrected Payoff\n": monte_carlo_bridge_corrected_payoff})
+
+            monte_carlo_prices.iloc[k, 1] = monte_carlo_bridge_corrected_payoff
+
+        # Naive Discrete Monitoring ----------------------------------------------------------------------------------------
+            # Naive Hits
+            naive_hits = (gbm_prices >= self.barrier_raw).any(axis=0).astype(int)
+
+            # Naive Knock-Out Payoff
+            naive_ko_payoff = (1-naive_hits) * np.maximum(gbm_prices.iloc[-1, :] - self.strike, 0)
+
+            # Naive Monte Carlo Payoff
+            naive_monte_carlo_payoff = np.exp(-self.rate * self.T) * (1 / self.n_sims) * naive_ko_payoff.sum()
+
+            # Output
             pd.set_option('display.float_format', '{:.4f}'.format)
-            print()
-            print(f"-----#####-----#####-----#####-----#####----- Bridge Correction Monitoring, n = {n} -----#####-----#####-----#####-----#####-----\n")
-            print({"Log Price Simulations\n": simulation, "Hit Probabilities\n": prob, "Bernoulli Path Simulations\n": path_simulations,
-                   "Path Survival Probabilities\n": path_survival_prob, "Survival Weighted Payoff\n": maturity_survival_weighted_payoff,
-                   "Monte Carlo Bridge Corrected Payoff\n": monte_carlo_bridge_corrected_payoff})
+            if self.debug:
+                print()
+                print(f"-----#####-----#####-----#####-----#####----- Naive Discrete Monitoring, n = {n} -----#####-----#####-----#####-----#####-----\n")
+                print({"Naive Hits\n": naive_hits, "Naive Knock-Out Payoff\n": naive_ko_payoff,
+                    "Naive Monte Carlo Payoff\n": naive_monte_carlo_payoff})
 
-        monte_carlo_prices.iloc[k, 1] = monte_carlo_bridge_corrected_payoff
+            monte_carlo_prices.iloc[k, 2] = naive_monte_carlo_payoff
 
-    # Naive Discrete Monitoring ----------------------------------------------------------------------------------------
-        # Naive Hits
-        naive_hits = (gbm_prices >= barrier_raw).any(axis=0).astype(int)
+        monte_carlo_prices["Differences"] = monte_carlo_prices["Bridge Correction Price"] - monte_carlo_prices["Naive Monitoring Price"]
+        monte_carlo_prices["Naive Error"] = monte_carlo_prices["Naive Monitoring Price"] - monte_carlo_prices["Bridge Correction Price"].iloc[-1,]
+        monte_carlo_prices["Bridge Error"] = monte_carlo_prices["Bridge Correction Price"] - monte_carlo_prices["Bridge Correction Price"].iloc[-1,]
 
-        # Naive Knock-Out Payoff
-        naive_ko_payoff = (1-naive_hits) * np.maximum(gbm_prices.iloc[-1, :] - strike, 0)
+        self.monte_carlo_prices = monte_carlo_prices
 
-        # Naive Monte Carlo Payoff
-        naive_monte_carlo_payoff = np.exp(-rate * T) * (1 / n_sims) * naive_ko_payoff.sum()
+        return self.monte_carlo_prices
 
-        # Output
-        pd.set_option('display.float_format', '{:.4f}'.format)
-        if debug:
-            print()
-            print(f"-----#####-----#####-----#####-----#####----- Naive Discrete Monitoring, n = {n} -----#####-----#####-----#####-----#####-----\n")
-            print({"Naive Hits\n": naive_hits, "Naive Knock-Out Payoff\n": naive_ko_payoff,
-                   "Naive Monte Carlo Payoff\n": naive_monte_carlo_payoff})
+    # --------------------------------------------------------------------------------------
 
-        monte_carlo_prices.iloc[k, 2] = naive_monte_carlo_payoff
+    def dbm_plot(self):
 
-    monte_carlo_prices["Differences"] = monte_carlo_prices["Bridge Correction Price"] - monte_carlo_prices["Naive Monitoring Price"]
-    monte_carlo_prices["Naive Error"] = monte_carlo_prices["Naive Monitoring Price"] - monte_carlo_prices["Bridge Correction Price"].iloc[-1,]
-    monte_carlo_prices["Bridge Error"] = monte_carlo_prices["Bridge Correction Price"] - monte_carlo_prices["Bridge Correction Price"].iloc[-1,]
+        if not hasattr(self, "self.monte_carlo_prices"):
+            self.discretisation_bridge_monitoring()
 
-    return monte_carlo_prices
+        eplt = engine_plotter()
 
-
-n_lens = np.arange(100, 10000, 100).tolist()
-out = discretisation_bridge_monitoring(1000, 955, 0.2**0.5, 1, 0.1, n_lens, 10000, 1200, plot = True)
-#%%
-#output = discretisation_bridge_monitoring(1000, 955, 0.2**0.5, 1, 0.1, n_lens, 1000, 1200, 2.5, plot = True, debug = True)
-
-
-# %%
+        cols1 = ["Bridge Correction Price", "Naive Monitoring Price"]
+        cols2 = ["Bridge Error", "Naive Error"]
+        self.fig1 = eplt.delta_engine_plotter((12, 4), cols1, self.monte_carlo_prices.index[:-1], self.monte_carlo_prices.iloc[:-1,], 1, 2, x_label="n lengths")
+        self.fig2 = eplt.delta_engine_plotter((12, 4), cols2, self.monte_carlo_prices["dt"].tolist()[:-1], self.monte_carlo_prices.iloc[:-1,], 1, 2, x_label="dt")
+        
+        return self.fig1, self.fig2

@@ -6,6 +6,7 @@ sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics\sr
 
 from utilities.utilities_hedging.utilities_delta_gamma_engine import utilityDGE
 from simulation.pricing_paths import pricePATH
+from plotting.repo_plots import engine_plotter
 
 import numpy as np
 import pandas as pd
@@ -84,9 +85,9 @@ class delta_hedge_engine:
         if not hasattr(self, "bsm_cp"):
             self.bsm_put_call_pricer()  
 
-        utils = utilityDGE()
+        plotter = engine_plotter()
         cols = ["Call Price", "Put Price", "Asset Prices"]
-        fig = utils.delta_engine_plotter((11, 8.5), cols, self.bsm_cp.index, self.bsm_cp, nrow = 3, ncol = 1)
+        fig = plotter.delta_engine_plotter((11, 8.5), cols, self.bsm_cp.index, self.bsm_cp, nrow = 3, ncol = 1)
 
         return fig
     
