@@ -18,6 +18,7 @@ class utilityDGE:
 
         return c_tx, p_tx, delta_call, delta_put, bank_call, bank_put, portfolio_call, portfolio_put
 
+    # --------------------------------------------------------------------
 
     def time_steps_gamma_delta_pricer(self, time, s_t, strike, rate, sig):
 
@@ -46,6 +47,8 @@ class utilityDGE:
 
         return c_tx, p_tx, delta_call, delta_put, gamma_call_put
 
+    # --------------------------------------------------------------------
+
     def time_steps_0_portfolio(self, s_t, delta_call, delta_put, c_tx, p_tx):
 
         portfolio_call = c_tx
@@ -54,6 +57,8 @@ class utilityDGE:
         bank_put = portfolio_put - delta_put * s_t
 
         return portfolio_call, bank_call, portfolio_put, bank_put
+
+    # --------------------------------------------------------------------
 
     def time_steps_i_portfolio(self, i, bank_call, bank_put, rate, dt, s_t, delta_call, delta_put, c_tx, p_tx):
 
@@ -65,12 +70,30 @@ class utilityDGE:
 
         return bank_call, bank_put, portfolio_call, portfolio_put
 
+    # --------------------------------------------------------------------
+
     def data_display(self, disp_width):
         pd.set_option("display.max_columns", None)
         pd.set_option("display.width", disp_width)
         pd.set_option("display.expand_frame_repr", False)
         return None
     
+    # --------------------------------------------------------------------
+
+    def delta_engine_plotter(self, dim, cols, t_0n, out, nrow, ncol, x_label: str = "Time"):
+        fig = plt.figure(figsize=dim, facecolor='darkgrey')
+
+        for i, data in enumerate(cols):
+            sub = fig.add_subplot(nrow, ncol, i + 1)
+            sub.plot(t_0n, out[data].values)
+            sub.set_xlabel(x_label, fontsize=12)
+            sub.set_ylabel(data, fontsize=12)
+            sub.grid()
+        fig.tight_layout()
+        plt.show(block=False)
+        return fig
+
+    # --------------------------------------------------------------------
 
     def run_simultation(self, no_of_sims: int, unique: bool, function, parameters_1, parameters_2 = None):
         hedge_error_call = np.empty(no_of_sims)
@@ -91,16 +114,5 @@ class utilityDGE:
         return hedge_error_call, hedge_error_put
     
 
-    def delta_engine_plotter(self, dim, cols, t_0n, out, nrow, ncol, x_label: str = "Time"):
-        fig = plt.figure(figsize=dim, facecolor='darkgrey')
-
-        for i, data in enumerate(cols):
-            sub = fig.add_subplot(nrow, ncol, i + 1)
-            sub.plot(t_0n, out[data].values)
-            sub.set_xlabel(x_label, fontsize=12)
-            sub.set_ylabel(data, fontsize=12)
-            sub.grid()
-        fig.tight_layout()
-        plt.show(block=False)
-        return fig
+    
     

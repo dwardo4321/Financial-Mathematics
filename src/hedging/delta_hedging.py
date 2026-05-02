@@ -2,15 +2,15 @@
 import sys
 from pathlib import Path
 
-SRC = Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics\src")
-sys.path.insert(0, str(SRC))
+sys.path.insert(0, str(Path(r"C:\Users\Tapson\Downloads\Financial-Mathematics\src")))
+
+from utilities.utilities_hedging.utilities_delta_gamma_engine import utilityDGE
+from simulation.pricing_paths import pricePATH
 
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import scipy.stats as stats
-from utilities.utilities_hedging.utilities_delta_gamma_engine import utilityDGE
-from simulation.pricing_paths import pricePATH
 
 #%%
 class delta_hedge_engine:
@@ -92,7 +92,7 @@ class delta_hedge_engine:
     
     # ---------------------------------------------------------------------------------------------------
 
-    def hedging_error_dist(self, no_of_sims: int, parameters_call=None, parameters_put=None):
+    def hedging_error_dist(self, no_of_sims: int = 5, parameters_call=None, parameters_put=None):
 
         utils = utilityDGE()
 
@@ -155,3 +155,5 @@ class delta_hedge_engine:
         plt.show()
 
      # ---------------------------------------------------------------------------------------------------
+
+# %%

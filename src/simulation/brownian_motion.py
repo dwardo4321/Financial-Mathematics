@@ -17,8 +17,6 @@ class brownian_motion:
     def simulate(self):
         dt = self.t / (self.n - 1)
 
-        w_t = []
-
         if self.correlation_matrix is not None:
             l_matrix = np.linalg.cholesky(self.correlation_matrix)
             z = np.random.normal(0, 1, size=(self.n - 1, self.num_gens))
@@ -83,4 +81,3 @@ class brownian_motion:
         return plt.show()
     
     # ---------------------------------------------------------------------------------------------------
-# %%

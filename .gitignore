@@ -1,7 +1,17 @@
+# Python cache files
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+
+# Virtual environments
 .venv/
 venv/
+
+# Environment variables
 .env
+
+# Jupyter
 .ipynb_checkpoints/
+
+# OS files
 .DS_Store
