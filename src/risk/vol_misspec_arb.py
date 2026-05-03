@@ -35,7 +35,7 @@ class volatility_misspec_arbitrage:
         utils = utilityDGE()
 
         drift = self.rate if self.risk_neutral_pricing else self.alpha
-        s_t = gbm.geometric_bm(self.s_0, self.vol_real, self.T, drift, self.n, n_sims=1)["Price"].to_numpy()
+        s_t = gbm.geometric_bm(self.s_0, self.vol_real, self.T, drift, self.n, n_sims=1).iloc[:, 0].to_numpy()
 
         c_tx, p_tx, delta_call, delta_put, bank_call, bank_put, portfolio_call, portfolio_put = utils.array_def(self.n)
         gamma_call_put = np.zeros(self.n)
